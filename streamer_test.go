@@ -379,14 +379,12 @@ func TestStreamer_Error(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewStreamer err: %v", err)
 	}
-	s.ctx = context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	s.ctx = ctx
 	errors := make(chan *Error, 1)
 	s.errChan = errors
 
-	_, cancel := context.WithCancel(s.ctx)
 	errors <- newError(errStreamEOF)
-	cancel()
-
 	if s.Error() != nil {
 		t.Fatalf("err != %v err: %v", nil, err)
 	}
@@ -405,6 +403,12 @@ func TestStreamer_Error(t *testing.T) {
 	errors <- newError(errMock)
 	if s.Error().(*Error).Original() != errMock {
 		t.Fatalf("err != %v err: %v", errMock, err)
+	}
+
+	cancel()
+	errors <- newError(errMock)
+	if s.Error() != nil {
+		t.Fatalf("err != %v err: %v", nil, err)
 	}
 
 	close(errors)
