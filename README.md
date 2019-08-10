@@ -75,7 +75,7 @@ and copy gbinlog to _repos/src/github.com/Breeze0806/gbinlog
 
 #### Run 
 ```bash
-go build go build && ./goreportcard -http=:6060
+go build && ./goreportcard -http=:6060
 ```
 用浏览器打开[GoReport](http://localhost:6060)，键入github.com/Breeze0806/gbinlog获取报告
 
