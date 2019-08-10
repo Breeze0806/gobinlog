@@ -58,7 +58,10 @@ test:
 cover:
 	./cover.sh $(PKGS)
 
-
 .PHONY: examples
 examples:
 	@cd examples/binlogDump && go build
+
+.PHONY: doc
+doc:
+	@godoc -http=:6080

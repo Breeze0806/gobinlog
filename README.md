@@ -30,11 +30,54 @@ go get github.com/Breeze0806/gbinlog
 + 表MysqlTable和列MysqlColumn需要实现，用于MysqlTableMapper接口
 + 生成一个RowStreamer，设置一个正确的binlog位置并使用Stream接受数据，具体可以使用sendTransaction进行具体的行为定义
 
-See the [binlogStream](examples/binlogDump/README.md)  for more details.
+See the [binlogStream](examples/binlogDump/README.md) and [doocumentation](https://github.com/Breeze0806/gbinlog#godoc) for more details.
 
-[ci-img]: https://travis-ci.com/Breeze0806/gbinlog.svg?branch=master
+### GoDoc
+
+运行make doc，就可以使用浏览器打开[documentation](http://localhost:6080/pkg/github.com/Breeze0806/gbinlog/)
+
+### GoReport
+
+see [goreportcard](https://github.com/gojp/goreportcard) for more detals
+
+#### Modify 
+you should modify in download/download.go
+```go
+	if ex {
+		log.Println("Update", root.Repo)
+		err = root.VCS.Download(fullLocalPath)
+		if err != nil && firstAttempt {
+			// may have been rebased; we delete the directory, then try one more time:
+			log.Printf("Failed to download %q (%v), trying again...", root.Repo, err.Error())
+			err = os.RemoveAll(fullLocalPath)
+			if err != nil {
+				log.Println("Failed to delete path:", fullLocalPath, err)
+			}
+			return download(path, dest, false)
+		} else if err != nil {
+			return root, err
+		}
+	}
+```
+to
+```go
+    if ex {
+        log.Println("Update", root.Repo)
+        return root,nil
+    }
+```
+and copy gbinlog to _repos/src/github.com/Breeze0806/gbinlog
+
+#### Run 
+```bash
+go build go build && ./goreportcard -http=:6060
+```
+用浏览器打开http://localhost:6060，键入github.com/Breeze0806/gbinlog获取报告
+
+
+[ci-img]: https://travis-ci.com/Breeze0806/gbinlog.svg?token=tRFzqxkgFsLcVYfq8uKg&branch=master
 [ci]: https://travis-ci.com/Breeze0806/gbinlog
-[cov-img]: https://codecov.io/gh/Breeze0806/gbinlog/branch/master/graph/badge.svg
+[cov-img]: https://codecov.io/gh/Breeze0806/gbinlog/branch/master/graph/badge.svg?token=UGb27Nysga
 [cov]: https://codecov.io/gh/Breeze0806/gbinlog
 [license-img]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
 [license]: https://github.com/Breeze0806/gbinlog/blob/master/LICENSE
