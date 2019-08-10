@@ -7,9 +7,11 @@ binlogDump将自己伪装成slave获取mysql主从复杂流来获取mysql数据�
 + golang 1.9+
 
 ## Installation
+```bash
 go get github.com/Breeze0806/gbinlog
 go get github.com/go-sql-driver/mysql
 make example
+```
 
 ## Quick Start
 ### Prepare

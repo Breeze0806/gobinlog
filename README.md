@@ -40,7 +40,12 @@ See the [binlogStream](examples/binlogDump/README.md) and [doocumentation](https
 
 see [goreportcard](https://github.com/gojp/goreportcard) for more detals
 
-#### Modify 
+#### Install
+```bash
+go get github.com/gojp/goreportcard
+make install
+```
+#### Modify
 you should modify in download/download.go
 ```go
 	if ex {
@@ -72,8 +77,7 @@ and copy gbinlog to _repos/src/github.com/Breeze0806/gbinlog
 ```bash
 go build go build && ./goreportcard -http=:6060
 ```
-用浏览器打开http://localhost:6060，键入github.com/Breeze0806/gbinlog获取报告
-
+用浏览器打开[GoReport](http://localhost:6060)，键入github.com/Breeze0806/gbinlog获取报告
 
 [ci-img]: https://travis-ci.com/Breeze0806/gbinlog.svg?token=tRFzqxkgFsLcVYfq8uKg&branch=master
 [ci]: https://travis-ci.com/Breeze0806/gbinlog
