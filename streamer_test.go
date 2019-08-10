@@ -19,16 +19,10 @@ var (
 			&mysqlColumnAttribute{
 				field: "id",
 				typ:   "int(11)",
-				key:   mysqlPrimaryKeyDescription,
-				null:  "",
-				extra: mysqlAutoIncrementDescription,
 			},
 			&mysqlColumnAttribute{
 				field: "message",
 				typ:   "varchar(256)",
-				key:   "",
-				null:  "",
-				extra: "",
 			},
 		},
 	}
@@ -259,12 +253,12 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 							{
 								Filed: "id",
 								Data:  []byte("1076895760"),
-								Type:  ColumnTypeLong,
+								Type:  columnTypeLong,
 							},
 							{
 								Filed: "message",
 								Data:  []byte("abcd"),
-								Type:  ColumnTypeVarchar,
+								Type:  columnTypeVarchar,
 							},
 						},
 					},
@@ -280,12 +274,12 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 							{
 								Filed: "id",
 								Data:  []byte("1076895760"),
-								Type:  ColumnTypeLong,
+								Type:  columnTypeLong,
 							},
 							{
 								Filed: "message",
 								Data:  []byte("abc"),
-								Type:  ColumnTypeVarchar,
+								Type:  columnTypeVarchar,
 							},
 						},
 					},
@@ -296,12 +290,12 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 							{
 								Filed: "id",
 								Data:  []byte("1076895760"),
-								Type:  ColumnTypeLong,
+								Type:  columnTypeLong,
 							},
 							{
 								Filed: "message",
 								Data:  []byte("abcd"),
-								Type:  ColumnTypeVarchar,
+								Type:  columnTypeVarchar,
 							},
 						},
 					},
@@ -317,12 +311,12 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 							{
 								Filed: "id",
 								Data:  []byte("1076895760"),
-								Type:  ColumnTypeLong,
+								Type:  columnTypeLong,
 							},
 							{
 								Filed: "message",
 								Data:  []byte("abc"),
-								Type:  ColumnTypeVarchar,
+								Type:  columnTypeVarchar,
 							},
 						},
 					},
@@ -333,15 +327,15 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 
 	m := newMockMapper()
 
-	r, err := NewStreamer(testDSN, testServerID, m)
+	s, err := NewStreamer(testDSN, testServerID, m)
 	if err != nil {
 		t.Fatalf("NewStreamer err: %#v", err)
 		return
 	}
-	r.SetStartBinlogPosition(testBinlogPosParseEvents)
+	s.SetBinlogPosition(testBinlogPosParseEvents)
 
 	var out *Transaction
-	r.sendTransaction = func(tran *Transaction) error {
+	s.sendTransaction = func(tran *Transaction) error {
 		out = tran
 		return nil
 	}
@@ -356,10 +350,10 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 
 	ctx := context.Background()
 
-	_, pErr := r.parseEvents(ctx, events)
+	_, pErr := s.parseEvents(ctx, events)
 
-	if pErr.Original() != ErrStreamEOF {
-		t.Fatalf("parseEvents err != %v, err: %v", ErrStreamEOF, err)
+	if pErr != nil {
+		t.Fatalf("parseEvents err != %v, err: %v", nil, pErr)
 	}
 
 	if err := checkTransactionEqual(out, want); err != nil {
@@ -369,13 +363,52 @@ func TestRowStreamer_parseEvents(t *testing.T) {
 
 func TestRowStreamer_SetStartBinlogPosition(t *testing.T) {
 	m := newMockMapper()
-	r, err := NewStreamer(testDSN, testServerID, m)
+	s, err := NewStreamer(testDSN, testServerID, m)
 	if err != nil {
 		t.Fatalf("NewStreamer err: %v", err)
-		return
 	}
-	r.SetStartBinlogPosition(testBinlogPosParseEvents)
-	if r.startBinlogPosition() != testBinlogPosParseEvents {
-		t.Fatalf("want != out, input:%+v want:%+v out %+v", testBinlogPosParseEvents, testBinlogPosParseEvents, r.startPos)
+	s.SetBinlogPosition(testBinlogPosParseEvents)
+	if s.binlogPosition() != testBinlogPosParseEvents {
+		t.Fatalf("want != out, input:%+v want:%+v out %+v", testBinlogPosParseEvents, testBinlogPosParseEvents, s.nowPos)
+	}
+}
+
+func TestStreamer_Error(t *testing.T) {
+	m := newMockMapper()
+	s, err := NewStreamer(testDSN, testServerID, m)
+	if err != nil {
+		t.Fatalf("NewStreamer err: %v", err)
+	}
+	s.ctx = context.Background()
+	errors := make(chan *Error, 1)
+	s.errChan = errors
+
+	_, cancel := context.WithCancel(s.ctx)
+	errors <- newError(errStreamEOF)
+	cancel()
+
+	if s.Error() != nil {
+		t.Fatalf("err != %v err: %v", nil, err)
+	}
+
+	errors <- newError(errStreamEOF)
+	if s.Error() != nil {
+		t.Fatalf("err != %v err: %v", nil, err)
+	}
+
+	errors <- newError(context.Canceled)
+	if s.Error() != nil {
+		t.Fatalf("err != %v err: %v", nil, err)
+	}
+
+	errMock := fmt.Errorf("mock error")
+	errors <- newError(errMock)
+	if s.Error().(*Error).Original() != errMock {
+		t.Fatalf("err != %v err: %v", errMock, err)
+	}
+
+	close(errors)
+	if s.Error() != nil {
+		t.Fatalf("err != %v err: %v", nil, err)
 	}
 }

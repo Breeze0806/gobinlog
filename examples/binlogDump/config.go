@@ -9,11 +9,12 @@ import (
 )
 
 type config struct {
-	DSN      string `json:"dsn"`
-	OutFile  string `json:"outFile"`
-	LogFile  string `json:"logFile"`
-	LogLevel string `json:"logLevel"`
-	ServerID uint32 `json:"serverID"`
+	DSN       string `json:"dsn"`
+	OutFile   string `json:"outFile"`
+	LogFile   string `json:"logFile"`
+	LogLevel  string `json:"logLevel"`
+	ServerID  uint32 `json:"serverID"`
+	LogStdOut bool   `json:"logStdOut"`
 }
 
 var levelMap = map[string]gbinlog.LogLevel{

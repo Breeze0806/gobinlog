@@ -38,11 +38,12 @@ FLUSH PRIVILEGES;                                                               
 + outFile 输出文件，每一行是一个json，代表一行数据或一个sql语句
 + logFile 日志文件
 + logLevel 日志级别，debug/info/error 调试/信息/错误
++ logStdOut 日志是否只打印到标准输出
 + serverID 当前slave的编号
 
 ### Run
 + 使用程序运行
-```shell
+```bash
 ./binlogDump -c config/binlogDump.json
 ```
 + 该程序的mysql数据库在本机,版本5.7.27

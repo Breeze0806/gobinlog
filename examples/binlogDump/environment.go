@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -34,10 +35,20 @@ func (e *environment) initLogger() *environment {
 	if e.err != nil {
 		return e
 	}
-	e.logger, e.err = os.OpenFile(e.config.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-	log.SetOutput(e.logger)
+	var writer io.Writer
+
+	if e.config.LogStdOut {
+		writer = os.Stdout
+	} else {
+		e.logger, e.err = os.OpenFile(e.config.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+		if e.err != nil {
+			return e
+		}
+		writer = e.logger
+	}
 	log.SetFlags(log.Lmicroseconds | log.LstdFlags | log.Lshortfile)
-	gbinlog.SetLogger(gbinlog.NewDefaultLogger(e.logger, gbinlog.InfoLevel))
+	log.SetOutput(writer)
+	gbinlog.SetLogger(gbinlog.NewDefaultLogger(writer, e.config.logLevel()))
 	return e
 }
 
@@ -97,7 +108,7 @@ func (e *environment) initStreamer() *environment {
 	if err != nil {
 		return e
 	}
-	e.streamer.SetStartBinlogPosition(pos)
+	e.streamer.SetBinlogPosition(pos)
 	return e
 }
 

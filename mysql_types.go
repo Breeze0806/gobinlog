@@ -89,37 +89,37 @@ func GetStatementCategory(sql string) StatementType {
 
 //列数据类型
 const (
-	ColumnTypeDecimal    = replication.TypeDecimal    //精确实数
-	ColumnTypeTiny       = replication.TypeTiny       //int8
-	ColumnTypeShort      = replication.TypeShort      //int16
-	ColumnTypeLong       = replication.TypeLong       //int32
-	ColumnTypeFloat      = replication.TypeFloat      //float32
-	ColumnTypeDouble     = replication.TypeDouble     //float64
-	ColumnTypeNull       = replication.TypeNull       //null
-	ColumnTypeTimestamp  = replication.TypeTimestamp  //时间戳
-	ColumnTypeLongLong   = replication.TypeLongLong   //int64
-	ColumnTypeInt24      = replication.TypeInt24      //int24
-	ColumnTypeDate       = replication.TypeDate       //日期
-	ColumnTypeTime       = replication.TypeTime       //时间
-	ColumnTypeDateTime   = replication.TypeDateTime   //日期时间
-	ColumnTypeYear       = replication.TypeYear       //year
-	ColumnTypeNewDate    = replication.TypeNewDate    //日期
-	ColumnTypeVarchar    = replication.TypeVarchar    //可变字符串
-	ColumnTypeBit        = replication.TypeBit        //bit
-	ColumnTypeTimestamp2 = replication.TypeTimestamp2 //时间戳
-	ColumnTypeDateTime2  = replication.TypeDateTime2  //日期时间
-	ColumnTypeTime2      = replication.TypeTime2      //时间
-	ColumnTypeJSON       = replication.TypeJSON       //json
-	ColumnTypeNewDecimal = replication.TypeNewDecimal //精确实数
-	ColumnTypeEnum       = replication.TypeEnum       //枚举
-	ColumnTypeSet        = replication.TypeSet        //字符串
-	ColumnTypeTinyBlob   = replication.TypeTinyBlob   //小型二进制
-	ColumnTypeMediumBlob = replication.TypeMediumBlob //中型二进制
-	ColumnTypeLongBlob   = replication.TypeLongBlob   //长型二进制
-	ColumnTypeBlob       = replication.TypeBlob       //长型二进制
-	ColumnTypeVarString  = replication.TypeVarString  //可变字符串
-	ColumnTypeString     = replication.TypeString     //字符串
-	ColumnTypeGeometry   = replication.TypeGeometry   //几何
+	columnTypeDecimal    ColumnType = replication.TypeDecimal    //精确实数
+	columnTypeTiny                  = replication.TypeTiny       //int8
+	columnTypeShort                 = replication.TypeShort      //int16
+	columnTypeLong                  = replication.TypeLong       //int32
+	columnTypeFloat                 = replication.TypeFloat      //float32
+	columnTypeDouble                = replication.TypeDouble     //float64
+	columnTypeNull                  = replication.TypeNull       //null
+	columnTypeTimestamp             = replication.TypeTimestamp  //时间戳
+	columnTypeLongLong              = replication.TypeLongLong   //int64
+	columnTypeInt24                 = replication.TypeInt24      //int24
+	columnTypeDate                  = replication.TypeDate       //日期
+	columnTypeTime                  = replication.TypeTime       //时间
+	columnTypeDateTime              = replication.TypeDateTime   //日期时间
+	columnTypeYear                  = replication.TypeYear       //year
+	columnTypeNewDate               = replication.TypeNewDate    //日期
+	columnTypeVarchar               = replication.TypeVarchar    //可变字符串
+	columnTypeBit                   = replication.TypeBit        //bit
+	columnTypeTimestamp2            = replication.TypeTimestamp2 //时间戳
+	columnTypeDateTime2             = replication.TypeDateTime2  //日期时间
+	columnTypeTime2                 = replication.TypeTime2      //时间
+	columnTypeJSON                  = replication.TypeJSON       //json
+	columnTypeNewDecimal            = replication.TypeNewDecimal //精确实数
+	columnTypeEnum                  = replication.TypeEnum       //枚举
+	columnTypeSet                   = replication.TypeSet        //集合
+	columnTypeTinyBlob              = replication.TypeTinyBlob   //小型二进制
+	columnTypeMediumBlob            = replication.TypeMediumBlob //中型二进制
+	columnTypeLongBlob              = replication.TypeLongBlob   //长型二进制
+	columnTypeBlob                  = replication.TypeBlob       //长型二进制
+	columnTypeVarString             = replication.TypeVarString  //可变字符串
+	columnTypeString                = replication.TypeString     //字符串
+	columnTypeGeometry              = replication.TypeGeometry   //几何
 )
 
 //ColumnType 从binlog中获取的列类型
@@ -127,37 +127,37 @@ type ColumnType int
 
 var (
 	columnTypeStrings = map[ColumnType]string{
-		ColumnTypeDecimal:    "Decimal",
-		ColumnTypeTiny:       "Tiny",
-		ColumnTypeShort:      "Short",
-		ColumnTypeLong:       "Long",
-		ColumnTypeFloat:      "Float",
-		ColumnTypeDouble:     "Double",
-		ColumnTypeNull:       "Null",
-		ColumnTypeTimestamp:  "Timestamp",
-		ColumnTypeLongLong:   "LongLong",
-		ColumnTypeInt24:      "Int24",
-		ColumnTypeDate:       "Date",
-		ColumnTypeTime:       "Time",
-		ColumnTypeDateTime:   "DateTime",
-		ColumnTypeYear:       "Year",
-		ColumnTypeNewDate:    "NewDate",
-		ColumnTypeVarchar:    "Varchar",
-		ColumnTypeBit:        "Bit",
-		ColumnTypeTimestamp2: "Timestamp2",
-		ColumnTypeDateTime2:  "DateTime2",
-		ColumnTypeTime2:      "Time2",
-		ColumnTypeJSON:       "JSON",
-		ColumnTypeNewDecimal: "NewDecimal",
-		ColumnTypeEnum:       "Enum",
-		ColumnTypeSet:        "Set",
-		ColumnTypeTinyBlob:   "TinyBlob",
-		ColumnTypeMediumBlob: "MediumBlob",
-		ColumnTypeLongBlob:   "LongBlob",
-		ColumnTypeBlob:       "Blob",
-		ColumnTypeVarString:  "VarString",
-		ColumnTypeString:     "String",
-		ColumnTypeGeometry:   "Geometry",
+		columnTypeDecimal:    "Decimal",
+		columnTypeTiny:       "Tiny",
+		columnTypeShort:      "Short",
+		columnTypeLong:       "Long",
+		columnTypeFloat:      "Float",
+		columnTypeDouble:     "Double",
+		columnTypeNull:       "Null",
+		columnTypeTimestamp:  "Timestamp",
+		columnTypeLongLong:   "LongLong",
+		columnTypeInt24:      "Int24",
+		columnTypeDate:       "Date",
+		columnTypeTime:       "Time",
+		columnTypeDateTime:   "DateTime",
+		columnTypeYear:       "Year",
+		columnTypeNewDate:    "NewDate",
+		columnTypeVarchar:    "Varchar",
+		columnTypeBit:        "Bit",
+		columnTypeTimestamp2: "Timestamp2",
+		columnTypeDateTime2:  "DateTime2",
+		columnTypeTime2:      "Time2",
+		columnTypeJSON:       "JSON",
+		columnTypeNewDecimal: "NewDecimal",
+		columnTypeEnum:       "Enum",
+		columnTypeSet:        "Set",
+		columnTypeTinyBlob:   "TinyBlob",
+		columnTypeMediumBlob: "MediumBlob",
+		columnTypeLongBlob:   "LongBlob",
+		columnTypeBlob:       "Blob",
+		columnTypeVarString:  "VarString",
+		columnTypeString:     "String",
+		columnTypeGeometry:   "Geometry",
 	}
 )
 
@@ -172,8 +172,8 @@ func (c ColumnType) String() string {
 //IsInteger 是否是整形
 func (c ColumnType) IsInteger() bool {
 	switch c {
-	case ColumnTypeTiny, ColumnTypeShort, ColumnTypeInt24, ColumnTypeLong,
-		ColumnTypeLongLong:
+	case columnTypeTiny, columnTypeShort, columnTypeInt24, columnTypeLong,
+		columnTypeLongLong:
 		return true
 	default:
 		return false
@@ -183,7 +183,7 @@ func (c ColumnType) IsInteger() bool {
 //IsFloat 是否是实数
 func (c ColumnType) IsFloat() bool {
 	switch c {
-	case ColumnTypeFloat, ColumnTypeDouble:
+	case columnTypeFloat, columnTypeDouble:
 		return true
 	default:
 		return false
@@ -193,7 +193,7 @@ func (c ColumnType) IsFloat() bool {
 //IsDecimal 是否是精确实数
 func (c ColumnType) IsDecimal() bool {
 	switch c {
-	case ColumnTypeDecimal, ColumnTypeNewDecimal:
+	case columnTypeDecimal, columnTypeNewDecimal:
 		return true
 	default:
 		return false
@@ -203,7 +203,7 @@ func (c ColumnType) IsDecimal() bool {
 //IsTimestamp 是否是时间戳
 func (c ColumnType) IsTimestamp() bool {
 	switch c {
-	case ColumnTypeTimestamp, ColumnTypeTimestamp2:
+	case columnTypeTimestamp, columnTypeTimestamp2:
 		return true
 	default:
 		return false
@@ -213,7 +213,7 @@ func (c ColumnType) IsTimestamp() bool {
 //IsTime 是否是时间
 func (c ColumnType) IsTime() bool {
 	switch c {
-	case ColumnTypeTime, ColumnTypeTime2:
+	case columnTypeTime, columnTypeTime2:
 		return true
 	default:
 		return false
@@ -223,7 +223,7 @@ func (c ColumnType) IsTime() bool {
 //IsDate 是否是日期
 func (c ColumnType) IsDate() bool {
 	switch c {
-	case ColumnTypeDate, ColumnTypeNewDate:
+	case columnTypeDate, columnTypeNewDate:
 		return true
 	default:
 		return false
@@ -233,7 +233,7 @@ func (c ColumnType) IsDate() bool {
 //IsDateTime 是否是日期时间
 func (c ColumnType) IsDateTime() bool {
 	switch c {
-	case ColumnTypeDateTime, ColumnTypeDateTime2:
+	case columnTypeDateTime, columnTypeDateTime2:
 		return true
 	default:
 		return false
@@ -243,7 +243,7 @@ func (c ColumnType) IsDateTime() bool {
 //IsBlob 是否是二进制
 func (c ColumnType) IsBlob() bool {
 	switch c {
-	case ColumnTypeTinyBlob, ColumnTypeMediumBlob, ColumnTypeLongBlob, ColumnTypeBlob:
+	case columnTypeTinyBlob, columnTypeMediumBlob, columnTypeLongBlob, columnTypeBlob:
 		return true
 	default:
 		return false
@@ -253,7 +253,7 @@ func (c ColumnType) IsBlob() bool {
 //IsBit 是否是bit
 func (c ColumnType) IsBit() bool {
 	switch c {
-	case ColumnTypeBit:
+	case columnTypeBit:
 		return true
 	default:
 		return false
@@ -263,7 +263,7 @@ func (c ColumnType) IsBit() bool {
 //IsString 是否是字符串
 func (c ColumnType) IsString() bool {
 	switch c {
-	case ColumnTypeVarchar, ColumnTypeVarString, ColumnTypeString:
+	case columnTypeVarchar, columnTypeVarString, columnTypeString:
 		return true
 	default:
 		return false
@@ -273,7 +273,7 @@ func (c ColumnType) IsString() bool {
 //IsGeometry 是否是几何
 func (c ColumnType) IsGeometry() bool {
 	switch c {
-	case ColumnTypeGeometry:
+	case columnTypeGeometry:
 		return true
 	default:
 		return false
@@ -285,12 +285,22 @@ type FormatType string
 
 //binlog格式类型
 var (
-	FormatTypeRow       = FormatType("ROW")       //列
-	FormatTypeMixed     = FormatType("MIXED")     //混合
-	FormatTypeStatement = FormatType("STATEMENT") //语句
+	formatTypeRow       = FormatType("ROW")       //列
+	formatTypeMixed     = FormatType("MIXED")     //混合
+	formatTypeStatement = FormatType("STATEMENT") //语句
 )
 
 //IsRow 是否是列binlog格式类型
 func (f FormatType) IsRow() bool {
-	return f == FormatTypeRow
+	return f == formatTypeRow
+}
+
+//IsMixed 是否是混合binlog格式类型
+func (f FormatType) IsMixed() bool {
+	return f == formatTypeMixed
+}
+
+//IsStatement 是否是语句binlog格式类型
+func (f FormatType) IsStatement() bool {
+	return f == formatTypeStatement
 }

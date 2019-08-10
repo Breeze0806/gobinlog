@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 
@@ -34,7 +33,6 @@ func (m *mockDumpConn) NoticeDump(_ uint32, _ uint32, _ string, _ uint16) error 
 }
 
 func (m *mockDumpConn) ReadPacket() ([]byte, error) {
-
 	return m.reader.ReadBytes('0')
 }
 
@@ -42,24 +40,22 @@ func (m *mockDumpConn) HandleErrorPacket(data []byte) error {
 	return fmt.Errorf("%v", string(data))
 }
 
-func Test_newSlaveConn(t *testing.T) {
-	_, err := newSlaveConn(func() (conn dumpConn, e error) {
+func Test_newSlaveConnection(t *testing.T) {
+	_, err := newSlaveConnection(func() (conn dumpConn, e error) {
 		return newMockDumpConn(bytes.NewBuffer(nil)), nil
 	})
 	if err != nil {
-		t.Fatalf("newSlaveConn fail. err: %v", err)
+		t.Fatalf("newSlaveConnection fail. err: %v", err)
 	}
 }
 
-func Test_slaveConn_startDumpFromBinlogPosition(t *testing.T) {
-	SetLogger(NewDefaultLogger(os.Stdout, DebugLevel))
-
+func Test_slaveConnection_startDumpFromBinlogPosition(t *testing.T) {
 	connBuf := bytes.NewBuffer(nil)
-	s, err := newSlaveConn(func() (conn dumpConn, e error) {
+	s, err := newSlaveConnection(func() (conn dumpConn, e error) {
 		return newMockDumpConn(connBuf), nil
 	})
 	if err != nil {
-		t.Fatalf("newSlaveConn fail. err: %v", err)
+		t.Fatalf("newSlaveConnection fail. err: %v", err)
 	}
 	defer s.close()
 
@@ -103,84 +99,65 @@ func Test_slaveConn_startDumpFromBinlogPosition(t *testing.T) {
 	}
 }
 
-func Test_slaveConn_startDumpFromBinlogPosition_Error(t *testing.T) {
-	logBuf := bytes.NewBuffer(nil)
-
-	SetLogger(NewDefaultLogger(newMockWriter(logBuf), DebugLevel))
-
+func Test_slaveConnection_startDumpFromBinlogPosition_Error(t *testing.T) {
 	connBuf := bytes.NewBuffer(nil)
-	s, err := newSlaveConn(func() (conn dumpConn, e error) {
+	s, err := newSlaveConnection(func() (conn dumpConn, e error) {
 		return newMockDumpConn(connBuf), nil
 	})
 	if err != nil {
-		t.Fatalf("newSlaveConn fail. err: %v", err)
+		t.Fatalf("newSlaveConnection fail. err: %v", err)
 	}
 	defer s.close()
 
-	testCases := []struct {
+	testCase := struct {
 		input []byte
 		want  string
 	}{
-		{
-			input: []byte{mysql.PacketERR, 'm', 'i', 's', 's', '0'},
-			want:  "miss0",
-		},
+		input: []byte{mysql.PacketERR, 'm', 'i', 's', 's', '0'},
+		want:  "miss0",
 	}
 
-	for _, v := range testCases {
-		connBuf.Write(v.input)
-	}
+	connBuf.Write(testCase.input)
 
 	event, err := s.startDumpFromBinlogPosition(context.Background(), 1, Position{})
 	if err != nil {
 		t.Fatalf("startDumpFromBinlogPosition fail. err: %v", err)
 	}
 	<-event
-	for _, v := range testCases {
-		out := logBuf.String()
-		if !strings.Contains(out, v.want) {
-			t.Fatalf("log does not Contains wamt, log: %v, want: %v", out, v.want)
-		}
+	err = <-s.errors()
+	if !strings.Contains(err.Error(), testCase.want) {
+		t.Fatalf("log does not Contains wamt, error: %v, want: %v", err, testCase.want)
 	}
 }
 
-func Test_slaveConn_startDumpFromBinlogPosition_EOF(t *testing.T) {
-	logBuf := bytes.NewBuffer(nil)
-
-	SetLogger(NewDefaultLogger(newMockWriter(logBuf), DebugLevel))
-
+func Test_slaveConnection_startDumpFromBinlogPosition_EOF(t *testing.T) {
 	connBuf := bytes.NewBuffer(nil)
-	s, err := newSlaveConn(func() (conn dumpConn, e error) {
+	s, err := newSlaveConnection(func() (conn dumpConn, e error) {
 		return newMockDumpConn(connBuf), nil
 	})
 	if err != nil {
-		t.Fatalf("newSlaveConn fail. err: %v", err)
+		t.Fatalf("newSlaveConnection fail. err: %v", err)
 	}
 	defer s.close()
 
-	testCases := []struct {
+	testCase := struct {
 		input []byte
-		want  string
+		want  error
 	}{
-		{
-			input: []byte{mysql.PacketEOF, 'm', 'i', 's', 's', '0'},
-			want:  ErrStreamEOF.Error(),
-		},
+
+		input: []byte{mysql.PacketEOF, 'm', 'i', 's', 's', '0'},
+		want:  errStreamEOF,
 	}
 
-	for _, v := range testCases {
-		connBuf.Write(v.input)
-	}
+	connBuf.Write(testCase.input)
 
 	event, err := s.startDumpFromBinlogPosition(context.Background(), 1, Position{})
 	if err != nil {
 		t.Fatalf("startDumpFromBinlogPosition fail. err: %v", err)
 	}
 	<-event
-	for _, v := range testCases {
-		out := logBuf.String()
-		if !strings.Contains(out, v.want) {
-			t.Fatalf("log does not Contains wamt, log: %v, want: %v", out, v.want)
-		}
+	sErr := <-s.errors()
+	if sErr.Original() != testCase.want {
+		t.Fatalf("log does not Contains wamt, error: %v, want: %v", sErr, testCase.want)
 	}
 }

@@ -19,9 +19,11 @@ type MysqlTableMapper interface {
 type Streamer struct {
 	dsn             string
 	serverID        uint32
-	startPos        atomic.Value
+	nowPos          atomic.Value
 	tableMapper     MysqlTableMapper
 	sendTransaction SendTransactionFunc
+	errChan         <-chan *Error
+	ctx             context.Context
 }
 
 //SendTransactionFunc 处理事务信息函数，你可以将一个chan注册到这个函数中如
@@ -47,18 +49,19 @@ func NewStreamer(dsn string, serverID uint32,
 	}, nil
 }
 
-//SetStartBinlogPosition 设置开始的binlog位置
-func (s *Streamer) SetStartBinlogPosition(startPos Position) {
-	s.startPos.Store(startPos)
+//SetBinlogPosition 设置开始的binlog位置
+func (s *Streamer) SetBinlogPosition(startPos Position) {
+	s.nowPos.Store(startPos)
 }
 
-func (s *Streamer) startBinlogPosition() Position {
-	return s.startPos.Load().(Position)
+func (s *Streamer) binlogPosition() Position {
+	return s.nowPos.Load().(Position)
 }
 
 //Stream 注册一个处理事务信息函数到Stream中
 func (s *Streamer) Stream(ctx context.Context, sendTransaction SendTransactionFunc) error {
-	conn, err := newSlaveConn(func() (conn dumpConn, e error) {
+	s.ctx = ctx
+	conn, err := newSlaveConnection(func() (conn dumpConn, e error) {
 		return mysql.NewDumpConn(s.dsn, ctx)
 	})
 	if err != nil {
@@ -68,24 +71,43 @@ func (s *Streamer) Stream(ctx context.Context, sendTransaction SendTransactionFu
 	s.sendTransaction = sendTransaction
 	var events <-chan replication.BinlogEvent
 	var pos Position
-	events, err = conn.startDumpFromBinlogPosition(ctx, s.serverID, s.startBinlogPosition())
+	events, err = conn.startDumpFromBinlogPosition(ctx, s.serverID, s.binlogPosition())
 	if err != nil {
-		return err.msgf("startDumpFromBinlogPosition fail in pos: %+v", s.startPos)
+		return err.msgf("startDumpFromBinlogPosition fail in pos: %+v", s.nowPos)
 	}
-
+	s.errChan = conn.errChan
 	pos, err = s.parseEvents(ctx, events)
+	s.SetBinlogPosition(pos)
 	if err != nil {
-		return fmt.Errorf("parseEvents fail in pos: %+v error: %v", s.startPos, err)
+		return err.msgf("parseEvents fail in pos: %+v", err)
 	}
-	s.SetStartBinlogPosition(pos)
 	return nil
+}
+
+//Error 每次使用Stream后需要检测Error
+func (s *Streamer) Error() error {
+	select {
+	case err, ok := <-s.errChan:
+		if ok {
+			switch {
+			case s.ctx.Err() == context.Canceled:
+				return nil
+			case err.Original() == context.Canceled,
+				err.Original() == errStreamEOF:
+				return nil
+			default:
+				return err
+			}
+		}
+		return nil
+	}
 }
 
 func (s *Streamer) parseEvents(ctx context.Context, events <-chan replication.BinlogEvent) (Position, *Error) {
 	var tranEvents []*StreamEvent
 	var format replication.BinlogFormat
 	var err error
-	pos := s.startBinlogPosition()
+	pos := s.binlogPosition()
 	tablesMaps := make(map[uint64]*tableCache)
 	autocommit := true
 
@@ -102,7 +124,7 @@ func (s *Streamer) parseEvents(ctx context.Context, events <-chan replication.Bi
 		now := pos
 		pos.Offset = ev.NextPosition()
 		next := pos
-		tran := NewTransaction(now, next, int64(ev.Timestamp()), tranEvents)
+		tran := newTransaction(now, next, int64(ev.Timestamp()), tranEvents)
 		if err = s.sendTransaction(tran); err != nil {
 			return fmt.Errorf("sendTransaction error: %v", err)
 		}
@@ -118,13 +140,11 @@ func (s *Streamer) parseEvents(ctx context.Context, events <-chan replication.Bi
 		case ev, ok = <-events:
 			if !ok {
 				lw.logger().Infof("parseEvents reached end of binlog event stream")
-				return pos, newError(ErrStreamEOF).
-					msgf("parseEvents reached end of binlog event stream")
+				return pos, nil
 			}
 		case <-ctx.Done():
 			lw.logger().Infof("parseEvents stopping early due to binlog Streamer service shutdown or client disconnect")
-			return pos, newError(ctx.Err()).
-				msgf("parseEvents stopping early due to binlog Streamer service shutdown or client disconnect")
+			return pos, nil
 		}
 
 		// Validate the buffer before reading fields from it.
@@ -366,7 +386,7 @@ func (s *Streamer) parseEvents(ctx context.Context, events <-chan replication.Bi
 }
 
 func appendUpdateEventFromRows(tc *tableCache, rows *replication.Rows, timestamp int64) (*StreamEvent, error) {
-	ev := NewStreamEvent(StatementUpdate, timestamp, tc.table.Name())
+	ev := newStreamEvent(StatementUpdate, timestamp, tc.table.Name())
 	for i := range rows.Rows {
 		identifies, err := getIdentifiesFromRow(tc, rows, i)
 		if err != nil {
@@ -385,7 +405,7 @@ func appendUpdateEventFromRows(tc *tableCache, rows *replication.Rows, timestamp
 }
 
 func appendInsertEventFromRows(tc *tableCache, rows *replication.Rows, timestamp int64) (*StreamEvent, error) {
-	ev := NewStreamEvent(StatementInsert, timestamp, tc.table.Name())
+	ev := newStreamEvent(StatementInsert, timestamp, tc.table.Name())
 	for i := range rows.Rows {
 		values, err := getValuesFromRow(tc, rows, i)
 		if err != nil {
@@ -397,7 +417,7 @@ func appendInsertEventFromRows(tc *tableCache, rows *replication.Rows, timestamp
 }
 
 func appendDeleteEventFromRows(tc *tableCache, rows *replication.Rows, timestamp int64) (*StreamEvent, error) {
-	ev := NewStreamEvent(StatementDelete, timestamp, tc.table.Name())
+	ev := newStreamEvent(StatementDelete, timestamp, tc.table.Name())
 	for i := range rows.Rows {
 		identifies, err := getIdentifiesFromRow(tc, rows, i)
 		if err != nil {
@@ -417,10 +437,10 @@ func getValuesFromRow(tc *tableCache, rs *replication.Rows, rowIndex int) (*RowD
 		return nil, fmt.Errorf("getValuesFromRow the length of column(%d) in rows did not equal to "+
 			"the length of column in table metadata(%d)", rs.DataColumns.Count(), len(tc.table.Columns()))
 	}
-	values := NewRowData(rs.IdentifyColumns.Count())
+	values := newRowData(rs.IdentifyColumns.Count())
 
 	for c := 0; c < rs.DataColumns.Count(); c++ {
-		column := NewColumnData(tc.table.Columns()[c].Field(), ColumnType(tc.tableMap.Types[c]),
+		column := newColumnData(tc.table.Columns()[c].Field(), ColumnType(tc.tableMap.Types[c]),
 			false)
 
 		if !rs.DataColumns.Bit(c) {
@@ -463,10 +483,10 @@ func getIdentifiesFromRow(tc *tableCache, rs *replication.Rows, rowIndex int) (*
 		return nil, fmt.Errorf("getIdentifiesFromRow the length of IdentifyColumns(%d) in rows did not equal to "+
 			"the length of column in table metadata(%d)", rs.IdentifyColumns.Count(), len(tc.table.Columns()))
 	}
-	identifies := NewRowData(rs.IdentifyColumns.Count())
+	identifies := newRowData(rs.IdentifyColumns.Count())
 	for c := 0; c < rs.IdentifyColumns.Count(); c++ {
 
-		column := NewColumnData(tc.table.Columns()[c].Field(), ColumnType(tc.tableMap.Types[c]),
+		column := newColumnData(tc.table.Columns()[c].Field(), ColumnType(tc.tableMap.Types[c]),
 			false)
 		if !rs.IdentifyColumns.Bit(c) {
 			column.IsEmpty = true

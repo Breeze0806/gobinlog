@@ -7,11 +7,6 @@ import (
 	"github.com/Breeze0806/gbinlog/replication"
 )
 
-const (
-	mysqlPrimaryKeyDescription    = "PRI"            //主键
-	mysqlAutoIncrementDescription = "auto_increment" //自增
-)
-
 func TestTransaction_MarshalJSON(t *testing.T) {
 	testCases := []struct {
 		input *Transaction
@@ -41,12 +36,12 @@ func TestTransaction_MarshalJSON(t *testing.T) {
 									{
 										Filed: "id",
 										Data:  []byte("1076895760"),
-										Type:  ColumnTypeLong,
+										Type:  columnTypeLong,
 									},
 									{
 										Filed: "message",
 										Data:  []byte("abc"),
-										Type:  ColumnTypeVarchar,
+										Type:  columnTypeVarchar,
 									},
 								},
 							},
@@ -57,12 +52,12 @@ func TestTransaction_MarshalJSON(t *testing.T) {
 									{
 										Filed: "id",
 										Data:  []byte("1076895760"),
-										Type:  ColumnTypeLong,
+										Type:  columnTypeLong,
 									},
 									{
 										Filed: "message",
 										Data:  []byte("abcd"),
-										Type:  ColumnTypeVarchar,
+										Type:  columnTypeVarchar,
 									},
 								},
 							},
@@ -78,12 +73,12 @@ func TestTransaction_MarshalJSON(t *testing.T) {
 									{
 										Filed: "id",
 										Data:  []byte("1076895760"),
-										Type:  ColumnTypeLong,
+										Type:  columnTypeLong,
 									},
 									{
 										Filed: "message",
 										Data:  nil,
-										Type:  ColumnTypeVarchar,
+										Type:  columnTypeVarchar,
 									},
 								},
 							},
@@ -104,7 +99,6 @@ func TestTransaction_MarshalJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 		if string(out) != v.want {
-			//t.Log(string(out))
 			t.Fatalf("want != out,want: %v,out: %v", v.want, string(out))
 		}
 	}

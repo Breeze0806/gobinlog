@@ -3,5 +3,6 @@
   "outFile": "transaction.txt",
   "logFile": "binlogDump.log",
   "logLevel": "info",
+  "logStdOut": false,
   "serverID": 1234
 }

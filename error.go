@@ -8,7 +8,7 @@ import (
 
 //信息流到达EOF错误信息用于标识binlog流结束
 var (
-	ErrStreamEOF = errors.New("stream reached EOF") //信息流到达EOF
+	errStreamEOF = errors.New("stream reached EOF") //信息流到达EOF
 )
 
 //Error gbinlog的错误
@@ -31,12 +31,12 @@ func (e *Error) msgf(format string, args ...interface{}) *Error {
 	return e
 }
 
-//Original 原本的错误
+//Original 获取不带msg的原本的错误
 func (e *Error) Original() error {
 	return e.ori
 }
 
-//Error 错误信息
+//Error 获取详细错误信息
 func (e *Error) Error() string {
 	return fmt.Sprintf("%v oriErr: %v", e.msg, e.ori)
 }

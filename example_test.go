@@ -8,7 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"strings"
-	//_ "github.com/go-sql-driver/mysql" you need it in you own project
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
@@ -17,12 +18,8 @@ const (
 
 //列属性
 type mysqlColumnAttribute struct {
-	field         string //列名
-	typ           string //列类型
-	null          string //是否为空
-	key           string //PRI代表主键，UNI代表唯一索引
-	columnDefault []byte //默认值
-	extra         string //其他备注信息
+	field string //列名
+	typ   string //列类型
 }
 
 func (m *mysqlColumnAttribute) Field() string {
@@ -50,29 +47,6 @@ type exampleMysqlTableMapper struct {
 	db *sql.DB
 }
 
-func (e *exampleMysqlTableMapper) GetBinlogFormat() (format FormatType, err error) {
-	query := "SHOW VARIABLES LIKE 'binlog_format'"
-	var name, str string
-	err = e.db.QueryRow(query).Scan(&name, &str)
-	if err != nil {
-		err = fmt.Errorf("QueryRow fail. query: %s, error: %v", query, err)
-		return
-	}
-	format = FormatType(str)
-	return
-}
-
-func (e *exampleMysqlTableMapper) GetBinlogPosition() (pos Position, err error) {
-	query := "SHOW MASTER STATUS"
-	var metaDoDb, metaIgnoreDb, executedGTidSet string
-	err = e.db.QueryRow(query).Scan(&pos.Filename, &pos.Offset, &metaDoDb, &metaIgnoreDb, &executedGTidSet)
-	if err != nil {
-		err = fmt.Errorf("query fail. query: %s, error: %v", query, err)
-		return
-	}
-	return
-}
-
 func (e *exampleMysqlTableMapper) MysqlTable(name MysqlTableName) (MysqlTable, error) {
 	info := &mysqlTableInfo{
 		name:    name,
@@ -88,22 +62,15 @@ func (e *exampleMysqlTableMapper) MysqlTable(name MysqlTableName) (MysqlTable, e
 
 	for i := 0; rows.Next(); i++ {
 		column := &mysqlColumnAttribute{}
-		err = rows.Scan(&column.field, &column.typ, &column.null, &column.key, &column.columnDefault, &column.extra)
+		var null, key, extra string
+		var columnDefault []byte
+		err = rows.Scan(&column.field, &column.typ, &null, &key, &columnDefault, &extra)
 		if err != nil {
 			return info, err
 		}
 		info.columns = append(info.columns, column)
 	}
 	return info, nil
-}
-
-func showTransaction(t *Transaction) {
-	b, err := t.MarshalJSON()
-	if err != nil {
-		lw.logger().Errorf("MarshalJSON fail. err: %v", err)
-		return
-	}
-	lw.logger().Print("%v", string(b))
 }
 
 func ExampleStreamer_Stream() {
@@ -120,29 +87,16 @@ func ExampleStreamer_Stream() {
 	db.SetMaxOpenConns(4)
 
 	e := &exampleMysqlTableMapper{db: db}
-	format, err := e.GetBinlogFormat()
-	if err != nil {
-		lw.logger().Errorf("getBinlogFormat fail. err: %v", err)
-		return
+	pos := Position{
+		Filename: "mysql-bin.000004",
+		Offset:   2757,
 	}
-
-	if !format.IsRow() {
-		lw.logger().Errorf("binlog format is not row. format: %v", format)
-		return
-	}
-
-	pos, err := e.GetBinlogPosition()
-	if err != nil {
-		lw.logger().Errorf("GetBinlogPosition fail. err: %v", err)
-		return
-	}
-
-	r, err := NewStreamer(dsn, 1234, e)
+	s, err := NewStreamer(dsn, 1234, e)
 	if err != nil {
 		lw.logger().Errorf("NewStreamer fail. err: %v", err)
 		return
 	}
-	r.SetStartBinlogPosition(pos)
+	s.SetBinlogPosition(pos)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -156,13 +110,18 @@ func ExampleStreamer_Stream() {
 		}
 	}()
 
-	err = r.Stream(ctx, func(t *Transaction) error {
-		showTransaction(t)
+	err = s.Stream(ctx, func(t *Transaction) error {
+		fmt.Printf("%v", *t)
 		return nil
 	})
 
 	if err != nil {
 		log.Fatalf("Stream fail. err: %v", err)
 		return
+	}
+
+	err = s.Error()
+	if err != nil {
+		log.Fatalf("Stream fail. err: %v", err)
 	}
 }

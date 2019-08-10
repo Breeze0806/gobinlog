@@ -44,4 +44,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Stream fail. err: %v", err)
 	}
+
+	err = e.streamer.Error()
+	if err != nil {
+		log.Fatalf("Stream fail. err: %v", err)
+	}
+
 }

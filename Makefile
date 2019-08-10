@@ -15,13 +15,14 @@ SHOULD_LINT := true
 endif
 
 .PHONY: all
-all: lint test
+all: lint test examples
 
 .PHONY: dependencies
 dependencies:
 	@echo "Installing test dependencies..."
 	go get github.com/mattn/goveralls
 	go get github.com/Breeze0806/mysql
+	go get github.com/go-sql-driver/mysql
 ifdef SHOULD_LINT
 	@echo "Installing golint..."
 	go get -u golang.org/x/lint/golint
@@ -61,6 +62,10 @@ cover:
 .PHONY: examples
 examples:
 	@cd examples/binlogDump && go build
+
+.PHONY: binlogDumpStart
+binlogDumpStart:
+	@examples/binlogDump/binlogDump -c examples/binlogDump/config/binlogDump.json
 
 .PHONY: doc
 doc:

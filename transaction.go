@@ -15,8 +15,8 @@ type Transaction struct {
 	Events       []*StreamEvent //一组有事务的binlog evnet
 }
 
-//NewTransaction 创建Transaction
-func NewTransaction(now, next Position, timestamp int64,
+//newTransaction 创建Transaction
+func newTransaction(now, next Position, timestamp int64,
 	events []*StreamEvent) *Transaction {
 	return &Transaction{
 		NowPosition:  now,
@@ -52,8 +52,8 @@ type StreamEvent struct {
 	RowIdentifies []*RowData        //which data come from used for  StatementUpdate and StatementDelete
 }
 
-//NewStreamEvent 创建StreamEvent
-func NewStreamEvent(tranType StatementType,
+//newStreamEvent 创建StreamEvent
+func newStreamEvent(tranType StatementType,
 	timestamp int64, table MysqlTableName) *StreamEvent {
 	return &StreamEvent{
 		Type:          tranType,
@@ -105,8 +105,8 @@ type RowData struct {
 	Columns []*ColumnData
 }
 
-//NewRowData 创建RowData
-func NewRowData(cnt int) *RowData {
+//newRowData 创建RowData
+func newRowData(cnt int) *RowData {
 	return &RowData{
 		Columns: make([]*ColumnData, 0, cnt),
 	}
@@ -120,8 +120,8 @@ type ColumnData struct {
 	Data    []byte     // the data
 }
 
-//NewColumnData 创建ColumnData
-func NewColumnData(filed string, typ ColumnType, isEmpty bool) *ColumnData {
+//newColumnData 创建ColumnData
+func newColumnData(filed string, typ ColumnType, isEmpty bool) *ColumnData {
 	return &ColumnData{
 		Filed:   filed,
 		Type:    typ,
@@ -155,5 +155,4 @@ func (c *ColumnData) MarshalJSON() ([]byte, error) {
 		Data:           i,
 	}
 	return json.Marshal(notNullJSON)
-
 }
