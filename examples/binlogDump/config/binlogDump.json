@@ -1,0 +1,7 @@
+{
+  "dsn": "example:example@tcp(localhost:3306)/mysql?charset=utf8mb4",
+  "outFile": "transaction.txt",
+  "logFile": "binlogDump.log",
+  "logLevel": "info",
+  "serverID": 1234
+}
