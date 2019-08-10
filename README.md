@@ -16,9 +16,10 @@ gbinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库�
 + golang 1.9+
 
 ## Installation
+```bash
 go get github.com/Breeze0806/mysql
 go get github.com/Breeze0806/gbinlog
-
+```
 ## Quick Start
 ### Prepare
 + 对于自建MySQL，需要先开启Binlog写入功能，配置binlog-format为ROW模式
@@ -30,7 +31,7 @@ go get github.com/Breeze0806/gbinlog
 + 表MysqlTable和列MysqlColumn需要实现，用于MysqlTableMapper接口
 + 生成一个RowStreamer，设置一个正确的binlog位置并使用Stream接受数据，具体可以使用sendTransaction进行具体的行为定义
 
-See the [binlogStream](examples/binlogDump/README.md) and [doocumentation](https://github.com/Breeze0806/gbinlog#godoc) for more details.
+See the [binlogStream](examples/binlogDump/README.md) and [documentation](https://github.com/Breeze0806/gbinlog#godoc) for more details.
 
 ### GoDoc
 
@@ -38,40 +39,11 @@ See the [binlogStream](examples/binlogDump/README.md) and [doocumentation](https
 
 ### GoReport
 
-see [goreportcard](https://github.com/gojp/goreportcard) for more detals
-
-#### Install
+#### Installation
 ```bash
-go get github.com/gojp/goreportcard
+go get github.com/Breeze0806/goreportcard
 make install
 ```
-#### Modify
-you should modify in download/download.go
-```go
-	if ex {
-		log.Println("Update", root.Repo)
-		err = root.VCS.Download(fullLocalPath)
-		if err != nil && firstAttempt {
-			// may have been rebased; we delete the directory, then try one more time:
-			log.Printf("Failed to download %q (%v), trying again...", root.Repo, err.Error())
-			err = os.RemoveAll(fullLocalPath)
-			if err != nil {
-				log.Println("Failed to delete path:", fullLocalPath, err)
-			}
-			return download(path, dest, false)
-		} else if err != nil {
-			return root, err
-		}
-	}
-```
-to
-```go
-    if ex {
-        log.Println("Update", root.Repo)
-        return root,nil
-    }
-```
-and copy gbinlog to _repos/src/github.com/Breeze0806/gbinlog
 
 #### Run 
 ```bash
