@@ -1,6 +1,6 @@
 # gbinlog
 
-[![Go Report Card][report-img]][report][![GoDoc][doc-img]][doc][![Build Status][ci-img]][ci][![Coverage Status][cov-img]][cov][![LICENSE][license-img]][license]
+[![Build Status][ci-img]][ci][![Coverage Status][cov-img]][cov][![LICENSE][license-img]][license]
 
 gbinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库的数据变更，提供轻量级，快速的dump协议交互以及binlog的row模式下的格式解析
 
@@ -30,12 +30,8 @@ go get github.com/Breeze0806/gbinlog
 + 表MysqlTable和列MysqlColumn需要实现，用于MysqlTableMapper接口
 + 生成一个RowStreamer，设置一个正确的binlog位置并使用Stream接受数据，具体可以使用sendTransaction进行具体的行为定义
 
-See the [binlogStream](examples/binlogDump/README.md) and [documentation][doc] for more details.
+See the [binlogStream](examples/binlogDump/README.md)  for more details.
 
-[report-img]: https://goreportcard.com/badge/github.com/Breeze0806/gbinlog
-[report]: https://goreportcard.com/report/github.com/Breeze0806/gbinlog
-[doc-img]: https://godoc.org/github.com/Breeze0806/gbinlog?status.svg
-[doc]: https://godoc.org/github.com/Breeze0806/gbinlog
 [ci-img]: https://travis-ci.com/Breeze0806/gbinlog.svg?branch=master
 [ci]: https://travis-ci.com/Breeze0806/gbinlog
 [cov-img]: https://codecov.io/gh/Breeze0806/gbinlog/branch/master/graph/badge.svg
