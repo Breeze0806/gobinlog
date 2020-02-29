@@ -1,4 +1,4 @@
-package gbinlog
+package gobinlog
 
 import (
 	"bytes"
@@ -35,17 +35,17 @@ func TestNewDefaultLogger(t *testing.T) {
 		args   []interface{}
 	}{
 		{
-			printf: lw.logger().Debugf,
+			printf: _log.Debugf,
 			format: "debug %d",
 			args:   []interface{}{DebugLevel},
 		},
 		{
-			printf: lw.logger().Infof,
+			printf: _log.Infof,
 			format: "info %d",
 			args:   []interface{}{InfoLevel},
 		},
 		{
-			printf: lw.logger().Errorf,
+			printf: _log.Errorf,
 			format: "error %d",
 			args:   []interface{}{ErrorLevel},
 		},
@@ -74,7 +74,7 @@ func TestDefaultLogger_Print(t *testing.T) {
 		args  []interface{}
 	}{
 		{
-			print: lw.logger().Print,
+			print: _log.Print,
 			args:  []interface{}{DebugLevel},
 		},
 	}

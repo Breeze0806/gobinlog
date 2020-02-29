@@ -1,13 +1,45 @@
-package gbinlog
+package gobinlog
 
 import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
-	"github.com/Breeze0806/gbinlog/replication"
+	"github.com/Breeze0806/gobinlog/replication"
 )
+
+const (
+	mysqlUnsigned = "unsigned" //无符号
+)
+
+//列属性
+type mysqlColumnAttribute struct {
+	field string //列名
+	typ   string //列类型
+}
+
+func (m *mysqlColumnAttribute) Field() string {
+	return m.field
+}
+
+func (m *mysqlColumnAttribute) IsUnSignedInt() bool {
+	return strings.Contains(m.typ, mysqlUnsigned)
+}
+
+type mysqlTableInfo struct {
+	name    MysqlTableName
+	columns []MysqlColumn
+}
+
+func (m *mysqlTableInfo) Name() MysqlTableName {
+	return m.name
+}
+
+func (m *mysqlTableInfo) Columns() []MysqlColumn {
+	return m.columns
+}
 
 var (
 	tesInfo = &mysqlTableInfo{

@@ -1,4 +1,4 @@
-package gbinlog
+package gobinlog
 
 // Position 指定binlog的位置，以文件名和位移
 type Position struct {

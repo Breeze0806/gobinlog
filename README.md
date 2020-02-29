@@ -1,8 +1,8 @@
-# gbinlog
+# gobinlog
 
-[![Build Status][ci-img]][ci][![Coverage Status][cov-img]][cov][![LICENSE][license-img]][license]
+[！[Go Report Card][report-img]][report][！[GoDoc][doc-img]][doc][![Build Status][ci-img]][ci][![Coverage Status][cov-img]][cov][![LICENSE][license-img]][license]
 
-gbinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库的数据变更，提供轻量级，快速的dump协议交互以及binlog的row模式下的格式解析
+gobinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库的数据变更，提供轻量级，快速的dump协议交互以及binlog的row模式下的格式解析
 
 ## Features
 + 轻量级，快速的dump协议交互以及binlog的row模式格式解析
@@ -13,12 +13,12 @@ gbinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库�
 
 ## Requests
 + mysql 5.6+
-+ golang 1.9+
++ golang 1.1+
 
 ## Installation
 ```bash
 go get github.com/Breeze0806/mysql
-go get github.com/Breeze0806/gbinlog
+go get github.com/Breeze0806/gobinlog
 ```
 ## Quick Start
 ### Prepare
@@ -31,29 +31,15 @@ go get github.com/Breeze0806/gbinlog
 + 表MysqlTable和列MysqlColumn需要实现，用于MysqlTableMapper接口
 + 生成一个RowStreamer，设置一个正确的binlog位置并使用Stream接受数据，具体可以使用sendTransaction进行具体的行为定义
 
-See the [binlogStream](examples/binlogDump/README.md) and [documentation](https://github.com/Breeze0806/gbinlog#godoc) for more details.
+See the [binlogStream](cmd/binlogDump/README.md) and [documentation](https://github.com/Breeze0806/gobinlog#godoc) for more details.
 
-### GoDoc
-
-运行make doc，就可以使用浏览器打开[documentation](http://localhost:6080/pkg/github.com/Breeze0806/gbinlog/)
-
-### GoReport
-
-#### Installation
-```bash
-go get github.com/Breeze0806/goreportcard
-make install
-```
-
-#### Run 
-```bash
-go build && ./goreportcard -http=:6060
-```
-用浏览器打开[GoReport](http://localhost:6060)，键入github.com/Breeze0806/gbinlog获取报告
-
-[ci-img]: https://travis-ci.com/Breeze0806/gbinlog.svg?token=tRFzqxkgFsLcVYfq8uKg&branch=master
-[ci]: https://travis-ci.com/Breeze0806/gbinlog
-[cov-img]: https://codecov.io/gh/Breeze0806/gbinlog/branch/master/graph/badge.svg?token=UGb27Nysga
-[cov]: https://codecov.io/gh/Breeze0806/gbinlog
+[report-img]:https://goreportcard.com/badge/github.com/Breeze0806/gobinlog
+[report]:https://goreportcard.com/report/github.com/Breeze0806/gobinlog
+[doc-img]:https://godoc.org/github.com/Breeze0806/gobinlog?status.svg
+[doc]:https://godoc.org/github.com/Breeze0806/gobinlog
+[ci-img]: https://travis-ci.com/Breeze0806/gobinlog.svg?token=tRFzqxkgFsLcVYfq8uKg&branch=master
+[ci]: https://travis-ci.com/Breeze0806/gobinlog
+[cov-img]: https://codecov.io/gh/Breeze0806/gobinlog/branch/master/graph/badge.svg?token=UGb27Nysga
+[cov]: https://codecov.io/gh/Breeze0806/gobinlog
 [license-img]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-[license]: https://github.com/Breeze0806/gbinlog/blob/master/LICENSE
+[license]: https://github.com/Breeze0806/gobinlog/blob/master/LICENSE

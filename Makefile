@@ -1,6 +1,6 @@
 export GO15VENDOREXPERIMENT=1
 
-PRO_PATH=github.com/Breeze0806/gbinlog
+PRO_PATH=github.com/Breeze0806/gobinlog
 PKGS = ${PRO_PATH} ${PRO_PATH}/replication
 # Many Go tools take file globs or directories as arguments instead of packages.
 PKG_FILES ?=*.go replication
@@ -59,9 +59,9 @@ test:
 cover:
 	./cover.sh $(PKGS)
 
-.PHONY: examples
+.PHONY: cmd
 examples:
-	@cd examples/binlogDump && go build
+	@cd cmd/binlogDump && go build
 
 .PHONY: binlogDumpStart
 binlogDumpStart:

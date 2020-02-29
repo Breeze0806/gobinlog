@@ -1,10 +1,10 @@
-package gbinlog
+package gobinlog
 
 import (
 	"context"
 	"sync"
 
-	"github.com/Breeze0806/gbinlog/replication"
+	"github.com/Breeze0806/gobinlog/replication"
 	"github.com/Breeze0806/mysql"
 )
 
@@ -54,7 +54,7 @@ func (s *slaveConnection) close() {
 		func() {
 			if s.dc != nil {
 				s.dc.Close()
-				lw.logger().Infof("Close closing slave socket to unblock reads")
+				_log.Infof("Close closing slave socket to unblock reads")
 			}
 		})
 }
@@ -69,7 +69,7 @@ func (s *slaveConnection) prepareForReplication() *Error {
 
 func (s *slaveConnection) startDumpFromBinlogPosition(ctx context.Context, serverID uint32,
 	pos Position) (<-chan replication.BinlogEvent, *Error) {
-	lw.logger().Infof("startDumpFromBinlogPosition sending binlog dump command: nowPos: %+v slaveID: %v",
+	_log.Infof("startDumpFromBinlogPosition sending binlog dump command: nowPos: %+v slaveID: %v",
 		pos, serverID)
 	if err := s.dc.NoticeDump(serverID, uint32(pos.Offset), pos.Filename, 0); err != nil {
 		return nil, newError(err).msgf("noticeDump fail")
@@ -86,7 +86,7 @@ func (s *slaveConnection) startDumpFromBinlogPosition(ctx context.Context, serve
 		for {
 			ev, err := s.readBinlogEvent()
 			if err != nil {
-				lw.logger().Errorf("startDumpFromBinlogPosition readBinlogEvent fail. reason: %v", err)
+				_log.Errorf("startDumpFromBinlogPosition readBinlogEvent fail. reason: %v", err)
 				s.errChan <- err
 				close(s.errChan)
 				return
@@ -95,7 +95,7 @@ func (s *slaveConnection) startDumpFromBinlogPosition(ctx context.Context, serve
 			select {
 			case eventChan <- ev:
 			case <-ctx.Done():
-				lw.logger().Infof("startDumpFromBinlogPosition stop by ctx. reason: %v", ctx.Err())
+				_log.Infof("startDumpFromBinlogPosition stop by ctx. reason: %v", ctx.Err())
 				s.errChan <- newError(ctx.Err()).msgf("startDumpFromBinlogPosition cancel")
 				close(s.errChan)
 				return

@@ -1,6 +1,6 @@
 # binlogDump
 
-binlogDump将自己伪装成slave获取mysql主从复杂流来获取mysql数据库的数据变更,以json格式输出，是[gbinlog](https://github.com/Breeze0806/gbinlog)的一个例子
+binlogDump将自己伪装成slave获取mysql主从复杂流来获取mysql数据库的数据变更,以json格式输出，是[gobinlog](https://github.com/Breeze0806/gobinlog)的一个例子
 
 ## Requests
 + mysql 5.6+
@@ -8,7 +8,7 @@ binlogDump将自己伪装成slave获取mysql主从复杂流来获取mysql数据�
 
 ## Installation
 ```bash
-go get github.com/Breeze0806/gbinlog
+go get github.com/Breeze0806/gobinlog
 go get github.com/go-sql-driver/mysql
 make example
 ```

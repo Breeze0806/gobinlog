@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Breeze0806/gbinlog"
+	"github.com/Breeze0806/gobinlog"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,7 +16,7 @@ type environment struct {
 	db          *sql.DB
 	logger      *os.File
 	out         *os.File
-	streamer    *gbinlog.Streamer
+	streamer    *gobinlog.Streamer
 	tableMapper *mysqlTableMapper
 	err         error
 }
@@ -48,7 +48,7 @@ func (e *environment) initLogger() *environment {
 	}
 	log.SetFlags(log.Lmicroseconds | log.LstdFlags | log.Lshortfile)
 	log.SetOutput(writer)
-	gbinlog.SetLogger(gbinlog.NewDefaultLogger(writer, e.config.logLevel()))
+	gobinlog.SetLogger(gobinlog.NewDefaultLogger(writer, e.config.logLevel()))
 	return e
 }
 
@@ -104,7 +104,7 @@ func (e *environment) initStreamer() *environment {
 		return e
 	}
 
-	e.streamer, e.err = gbinlog.NewStreamer(e.config.DSN, e.config.ServerID, e.tableMapper)
+	e.streamer, e.err = gobinlog.NewStreamer(e.config.DSN, e.config.ServerID, e.tableMapper)
 	if err != nil {
 		return e
 	}

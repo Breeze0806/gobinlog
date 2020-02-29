@@ -1,9 +1,9 @@
 /*
-Package gbinlog 将自己伪装成slave获取mysql主从复杂流来
+Package gobinlog 将自己伪装成slave获取mysql主从复杂流来
 获取mysql数据库的数据变更，提供轻量级，快速的dump协议交互
 以及binlog的row模式下的格式解析。
 
-gbinlog使用方式非常简单，你要实现一个MysqlTableMapper
+gobinlog使用方式非常简单，你要实现一个MysqlTableMapper
 
 	type mysqlColumnAttribute struct {
 		field         string
@@ -69,9 +69,9 @@ gbinlog使用方式非常简单，你要实现一个MysqlTableMapper
 port是mysql的端口，db是mysql的数据库名，serverID要与主库不同，
 
 
-	s, err := gbinlog.NewStreamer(dsn, 1234, e)
+	s, err := gobinlog.NewStreamer(dsn, 1234, e)
 	if err != nil {
-		lw.logger().Errorf("NewStreamer fail. err: %v", err)
+		_log.Errorf("NewStreamer fail. err: %v", err)
 		return
 	}
 
@@ -93,6 +93,6 @@ SetBinlogPosition的参数可以通过SHOW MASTER STATUS获取，通过这个函
 
 当然你如果需要详细的调试信息,你可以通过SetLogger函数设置对应的调试接口
 
-    gbinlog.SetLogger(NewDefaultLogger(os.Stdout, DebugLevel))
+    gobinlog.SetLogger(NewDefaultLogger(os.Stdout, DebugLevel))
 */
-package gbinlog
+package gobinlog

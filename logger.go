@@ -1,4 +1,4 @@
-package gbinlog
+package gobinlog
 
 import (
 	"fmt"
@@ -73,7 +73,8 @@ func (d *defaultLogger) Print(args ...interface{}) {
 }
 
 var (
-	lw = loggerWrapper{l: newNilLogger()}
+	lw   = loggerWrapper{l: newNilLogger()}
+	_log = lw.logger()
 )
 
 type loggerWrapper struct {
@@ -97,4 +98,5 @@ func (l *loggerWrapper) logger() Logger {
 func SetLogger(logger Logger) {
 	lw.setLogger(logger)
 	mysql.SetLogger(logger)
+	_log = lw.logger()
 }

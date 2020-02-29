@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/Breeze0806/gbinlog"
+	"github.com/Breeze0806/gobinlog"
 )
 
 var filename = flag.String("c", "", "config")
@@ -36,7 +36,7 @@ func main() {
 		}
 	}()
 
-	err := e.streamer.Stream(ctx, func(t *gbinlog.Transaction) error {
+	err := e.streamer.Stream(ctx, func(t *gobinlog.Transaction) error {
 		showTransaction(t, e.out)
 		return nil
 	})

@@ -1,4 +1,4 @@
-package gbinlog
+package gobinlog
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ var (
 	errStreamEOF = errors.New("stream reached EOF") //信息流到达EOF
 )
 
-//Error gbinlog的错误
+//Error gobinlog的错误
 type Error struct {
 	ori error
 	msg string

@@ -1,9 +1,9 @@
-package gbinlog
+package gobinlog
 
 import (
 	"strings"
 
-	"github.com/Breeze0806/gbinlog/replication"
+	"github.com/Breeze0806/gobinlog/replication"
 )
 
 //StatementType means the sql statement type

@@ -1,4 +1,4 @@
-package gbinlog
+package gobinlog
 
 import (
 	"bufio"

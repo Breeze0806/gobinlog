@@ -1,10 +1,10 @@
-package gbinlog
+package gobinlog
 
 import (
 	"encoding/json"
 	"time"
 
-	"github.com/Breeze0806/gbinlog/replication"
+	"github.com/Breeze0806/gobinlog/replication"
 )
 
 //Transaction 代表一组有事务的binlog evnet

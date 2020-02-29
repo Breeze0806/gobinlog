@@ -1,10 +1,10 @@
-package gbinlog
+package gobinlog
 
 import (
 	"testing"
 	"time"
 
-	"github.com/Breeze0806/gbinlog/replication"
+	"github.com/Breeze0806/gobinlog/replication"
 )
 
 func TestTransaction_MarshalJSON(t *testing.T) {

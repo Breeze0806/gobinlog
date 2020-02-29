@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/Breeze0806/gbinlog"
+	"github.com/Breeze0806/gobinlog"
 )
 
 const (
@@ -32,15 +32,15 @@ func (m *mysqlColumnAttribute) IsUnSignedInt() bool {
 }
 
 type mysqlTableInfo struct {
-	name    gbinlog.MysqlTableName
-	columns []gbinlog.MysqlColumn
+	name    gobinlog.MysqlTableName
+	columns []gobinlog.MysqlColumn
 }
 
-func (m *mysqlTableInfo) Name() gbinlog.MysqlTableName {
+func (m *mysqlTableInfo) Name() gobinlog.MysqlTableName {
 	return m.name
 }
 
-func (m *mysqlTableInfo) Columns() []gbinlog.MysqlColumn {
+func (m *mysqlTableInfo) Columns() []gobinlog.MysqlColumn {
 	return m.columns
 }
 
@@ -49,7 +49,7 @@ type mysqlTableMapper struct {
 	info *mysqlTableInfo
 }
 
-func (m *mysqlTableMapper) GetBinlogFormat() (format gbinlog.FormatType, err error) {
+func (m *mysqlTableMapper) GetBinlogFormat() (format gobinlog.FormatType, err error) {
 	query := "SHOW VARIABLES LIKE 'binlog_format'"
 	var name, str string
 	err = m.db.QueryRow(query).Scan(&name, &str)
@@ -57,11 +57,11 @@ func (m *mysqlTableMapper) GetBinlogFormat() (format gbinlog.FormatType, err err
 		err = fmt.Errorf("QueryRow fail. query: %s, error: %v", query, err)
 		return
 	}
-	format = gbinlog.FormatType(str)
+	format = gobinlog.FormatType(str)
 	return
 }
 
-func (m *mysqlTableMapper) GetBinlogPosition() (pos gbinlog.Position, err error) {
+func (m *mysqlTableMapper) GetBinlogPosition() (pos gobinlog.Position, err error) {
 	query := "SHOW MASTER STATUS"
 	var metaDoDb, metaIgnoreDb, executedGTidSet string
 	err = m.db.QueryRow(query).Scan(&pos.Filename, &pos.Offset, &metaDoDb, &metaIgnoreDb, &executedGTidSet)
@@ -72,14 +72,14 @@ func (m *mysqlTableMapper) GetBinlogPosition() (pos gbinlog.Position, err error)
 	return
 }
 
-func (m *mysqlTableMapper) MysqlTable(name gbinlog.MysqlTableName) (gbinlog.MysqlTable, error) {
+func (m *mysqlTableMapper) MysqlTable(name gobinlog.MysqlTableName) (gobinlog.MysqlTable, error) {
 	if m.info != nil {
 		return m.info, nil
 	}
 
 	info := &mysqlTableInfo{
 		name:    name,
-		columns: make([]gbinlog.MysqlColumn, 0, 10),
+		columns: make([]gobinlog.MysqlColumn, 0, 10),
 	}
 
 	query := "desc " + name.String()
@@ -101,7 +101,7 @@ func (m *mysqlTableMapper) MysqlTable(name gbinlog.MysqlTableName) (gbinlog.Mysq
 	return info, nil
 }
 
-func showTransaction(t *gbinlog.Transaction, w io.Writer) {
+func showTransaction(t *gobinlog.Transaction, w io.Writer) {
 	b, err := t.MarshalJSON()
 	if err != nil {
 		return
