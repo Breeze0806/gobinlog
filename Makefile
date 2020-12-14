@@ -1,5 +1,5 @@
 export GO15VENDOREXPERIMENT=1
-
+export GO111MODULE=on
 PRO_PATH=github.com/Breeze0806/gobinlog
 PKGS = ${PRO_PATH} ${PRO_PATH}/replication
 # Many Go tools take file globs or directories as arguments instead of packages.
@@ -20,9 +20,8 @@ all: lint test examples
 .PHONY: dependencies
 dependencies:
 	@echo "Installing test dependencies..."
-	go get github.com/mattn/goveralls
-	go get github.com/Breeze0806/mysql
-	go get github.com/go-sql-driver/mysql
+	go mod tidy
+	go mod vendor
 ifdef SHOULD_LINT
 	@echo "Installing golint..."
 	go get -u golang.org/x/lint/golint
