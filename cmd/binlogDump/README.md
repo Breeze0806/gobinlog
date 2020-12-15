@@ -7,7 +7,19 @@ binlogDump将自己伪装成slave获取mysql主从复杂流来获取mysql数据�
 + golang 1.11+
 
 ## Installation
+
+### Linux
 ```bash
+export GO111MODULE=on
+```
+
+### windows
+```bash
+set GO111MODULE=on
+```
+
+```bash
+go mod init binlogDump
 go mod tidy
 go build
 ```
