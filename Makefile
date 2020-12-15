@@ -21,10 +21,9 @@ all: lint test examples
 dependencies:
 	@echo "Installing test dependencies..."
 	go mod tidy
-	go mod vendor
 ifdef SHOULD_LINT
 	@echo "Installing golint..."
-	go get -u golang.org/x/lint/golint
+	go get -u -v golang.org/x/lint/golint
 else
 	@echo "Not installing golint, since we don't expect to lint on" $(GO_VERSION)
 endif

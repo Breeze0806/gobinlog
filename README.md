@@ -13,13 +13,12 @@ gobinlog将自己伪装成slave获取mysql主从复杂流来获取mysql数据库
 
 ## Requests
 + mysql 5.6+
-+ golang 1.1+
++ golang 1.11+
 
 ## Installation
-```bash
-go get github.com/Breeze0806/mysql
-go get github.com/Breeze0806/gobinlog
-```
+
+第三方库管理已经托管到go mod下，请开启环境变量
+
 ## Quick Start
 ### Prepare
 + 对于自建MySQL，需要先开启Binlog写入功能，配置binlog-format为ROW模式
