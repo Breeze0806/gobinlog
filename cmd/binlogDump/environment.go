@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/Breeze0806/gobinlog"
+	mylog "github.com/Breeze0806/go/log"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -48,7 +49,7 @@ func (e *environment) initLogger() *environment {
 	}
 	log.SetFlags(log.Lmicroseconds | log.LstdFlags | log.Lshortfile)
 	log.SetOutput(writer)
-	gobinlog.SetLogger(gobinlog.NewDefaultLogger(writer, e.config.logLevel()))
+	gobinlog.SetLogger(mylog.NewDefaultLogger(writer, e.config.logLevel(),"[binlogDump]"))
 	return e
 }
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/Breeze0806/gobinlog"
+	mylog "github.com/Breeze0806/go/log"
 )
 
 type config struct {
@@ -17,13 +17,13 @@ type config struct {
 	LogStdOut bool   `json:"logStdOut"`
 }
 
-var levelMap = map[string]gobinlog.LogLevel{
-	"debug": gobinlog.DebugLevel,
-	"info":  gobinlog.InfoLevel,
-	"error": gobinlog.ErrorLevel,
+var levelMap = map[string]mylog.LogLevel{
+	"debug": mylog.DebugLevel,
+	"info":  mylog.InfoLevel,
+	"error": mylog.ErrorLevel,
 }
 
-func (c *config) logLevel() gobinlog.LogLevel {
+func (c *config) logLevel() mylog.LogLevel {
 	return levelMap[c.LogLevel]
 }
 
