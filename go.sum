@@ -1,5 +1,5 @@
-github.com/Breeze0806/go v0.0.0-20201221054556-044ad2224aae h1:bsI9R79DS/G/D9T6rEQ0o+jo8V9Af4gUHYiOESRqX9s=
-github.com/Breeze0806/go v0.0.0-20201221054556-044ad2224aae/go.mod h1:niKvfH8yV5Md3olFV9MOthNo1S7FqRaultp24pfAoIU=
+github.com/Breeze0806/go v0.0.0-20210103061143-9ef8afd97a59 h1:URCQKbBeVIckjyKdnYZIDIHsU2ZkVBRrxXxrAGag514=
+github.com/Breeze0806/go v0.0.0-20210103061143-9ef8afd97a59/go.mod h1:niKvfH8yV5Md3olFV9MOthNo1S7FqRaultp24pfAoIU=
 github.com/Breeze0806/mysql v1.4.2 h1:wMCNI0JmXXyhn7isQniigDOF3c/N0AjIZlkA7H3PAAk=
 github.com/Breeze0806/mysql v1.4.2/go.mod h1:qXuAHVlqq+odfcFLWzaOO31PuTEOHc7X51KKZCsYYPk=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
