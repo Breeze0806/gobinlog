@@ -1,10 +1,11 @@
-github.com/Breeze0806/go v0.0.0-20210103061143-9ef8afd97a59 h1:URCQKbBeVIckjyKdnYZIDIHsU2ZkVBRrxXxrAGag514=
-github.com/Breeze0806/go v0.0.0-20210103061143-9ef8afd97a59/go.mod h1:niKvfH8yV5Md3olFV9MOthNo1S7FqRaultp24pfAoIU=
+github.com/Breeze0806/go v0.0.0-20210513031655-61a934305111 h1:ZQH/NjlME+UH5sXW9DEFOCBccBGFVkxWLqmsytANI7E=
+github.com/Breeze0806/go v0.0.0-20210513031655-61a934305111/go.mod h1:sFBxHGMWcKaBKcGoNS4jzvYUldJ4CcdV3n41CjSIB44=
 github.com/Breeze0806/mysql v1.4.2 h1:wMCNI0JmXXyhn7isQniigDOF3c/N0AjIZlkA7H3PAAk=
 github.com/Breeze0806/mysql v1.4.2/go.mod h1:qXuAHVlqq+odfcFLWzaOO31PuTEOHc7X51KKZCsYYPk=
-github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
-github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
+github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
+github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+github.com/lib/pq v1.9.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/tidwall/gjson v1.6.1/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/gjson v1.6.4/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/match v1.0.1/go.mod h1:LujAq0jyVjBy028G1WhWfIzbpQfMO8bBZ6Tyb0+pL9E=

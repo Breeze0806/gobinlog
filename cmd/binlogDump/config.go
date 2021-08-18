@@ -17,13 +17,13 @@ type config struct {
 	LogStdOut bool   `json:"logStdOut"`
 }
 
-var levelMap = map[string]mylog.LogLevel{
+var levelMap = map[string]mylog.Level{
 	"debug": mylog.DebugLevel,
 	"info":  mylog.InfoLevel,
 	"error": mylog.ErrorLevel,
 }
 
-func (c *config) logLevel() mylog.LogLevel {
+func (c *config) logLevel() mylog.Level {
 	return levelMap[c.LogLevel]
 }
 
