@@ -1,6 +1,6 @@
 module github.com/Breeze0806/gobinlog
 
-go 1.16
+go 1.11
 
 require (
 	github.com/Breeze0806/go v0.0.0-20210513031655-61a934305111
